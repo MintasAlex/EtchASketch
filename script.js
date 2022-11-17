@@ -29,7 +29,7 @@ function generateGrid(gridWidth) {
 }
 
 function deleteGrid() {
-    while (gridContainer.firstChild){
+    while (gridContainer.firstChild) {
         gridContainer.removeChild(gridContainer.lastChild);
     }
 }
@@ -74,6 +74,8 @@ function colorCell(gridCell, drawingColor) {
         gridCell.style.backgroundColor = shadeColor(gridCell.style.backgroundColor, -10);
     } else if (lightenOn) {
         gridCell.style.backgroundColor = shadeColor(gridCell.style.backgroundColor, 10);
+    } else if (colorGrabOn) {
+        colorGrab(gridCell.style.backgroundColor);
     } else gridCell.style.backgroundColor = drawingColor;
 }
 
@@ -118,6 +120,16 @@ function drawRainbow() {
     }
 }
 
+function colorGrab(color) {
+    var R = parseInt(color.substring(4).split(',')[0]);
+    var G = parseInt(color.split(',')[1]);
+    var B = parseInt(color.split(',')[2])
+    drawingColor = rgbToHex(R, G, B);
+    console.log(color);
+    console.log(drawingColor);
+    penColorPicker.value = drawingColor;
+}
+
 
 
 //listening for actions on the grid
@@ -146,6 +158,7 @@ const clearBtn = document.querySelector("#clear");
 const gridSizeSliderContainter = document.querySelector("#grid-size-slider");
 const gridSizeSlider = gridSizeSliderContainter.querySelector("input");
 const gridSizeText = gridSizeSliderContainter.querySelector("p");
+const colorGrabBtn = document.querySelector("#grab-color");
 
 
 penColorPicker.addEventListener('input', () => {
@@ -157,61 +170,68 @@ backgroundColorPicker.addEventListener('input', () => {
     backgroundColor = backgroundColorPicker.value;
 });
 
+function buttonsReset() {
+    colorGrabOn = false;
+    colorGrabBtn.style.filter = "brightness(100%)";
+
+    eraserOn = false;
+    eraserBtn.style.filter = "brightness(100%)";
+    eraserBtn.style.fontSize = "18px";
+
+    rainbowOn = false;
+    rainbowBtn.style.filter = "brightness(100%)";
+    rainbowBtn.style.fontSize = "18px";
+    drawingColor = penColorPicker.value;
+
+    darkenOn = false;
+    darkenBtn.style.filter = "brightness(100%)";
+    darkenBtn.style.fontSize = "18px";
+
+    lightenOn = false;
+    lightenBtn.style.filter = "brightness(100%)";
+    lightenBtn.style.fontSize = "18px";
+}
+
 let eraserOn = false;
 eraserBtn.addEventListener('click', () => {
     if (!eraserOn) {
+        buttonsReset();
         drawingColor = backgroundColor;
         eraserOn = true;
         eraserBtn.style.filter = "brightness(80%)";
         eraserBtn.style.fontSize = "16px";
-    }
-    else {
-        drawingColor = penColorPicker.value;
-        eraserOn = false;
-        eraserBtn.style.filter = "brightness(100%)";
-        eraserBtn.style.fontSize = "18px";
-    }
+    } else buttonsReset();
 });
 
 let rainbowOn = false;
 rainbowBtn.addEventListener('click', () => {
     if (!rainbowOn) {
+        buttonsReset();
         rainbowOn = true;
         rainbowBtn.style.filter = "brightness(80%)";
         rainbowBtn.style.fontSize = "16px";
-    } else {
-        rainbowOn = false;
-        rainbowBtn.style.filter = "brightness(100%)";
-        rainbowBtn.style.fontSize = "18px";
-        drawingColor = penColorPicker.value;
-    }
+    } else buttonsReset();
 });
 
 let darkenOn = false;
 darkenBtn.addEventListener('click', () => {
     if (!darkenOn) {
+        buttonsReset();
         darkenOn = true;
         darkenBtn.style.filter = "brightness(80%)";
         darkenBtn.style.fontSize = "16px";
-    } else {
-        darkenOn = false;
-        darkenBtn.style.filter = "brightness(100%)";
-        darkenBtn.style.fontSize = "18px";
-    }
+    } else buttonsReset();
 });
 
 
 let lightenOn = false;
 lightenBtn.addEventListener('click', () => {
     if (!lightenOn) {
+        buttonsReset();
         lightenOn = true;
         lightenBtn.style.filter = "brightness(80%)";
         lightenBtn.style.fontSize = "16px";
-    } else {
-        lightenOn = false;
-        lightenBtn.style.filter = "brightness(100%)";
-        lightenBtn.style.fontSize = "18px";
-    }
+    } else buttonsReset();
 });
 
 let gridOn = true;
@@ -231,7 +251,7 @@ gridLineBtn.addEventListener('click', () => {
 
 clearBtn.addEventListener('click', clearGrid);
 
-gridSizeSlider.oninput = function() {
+gridSizeSlider.oninput = function () {
     gridWidth = this.value;
     gridSizeText.textContent = "Grid Size: " + gridWidth + " X " + gridWidth;
     gridCellWidth = 500 / gridWidth + "px ";
@@ -239,6 +259,19 @@ gridSizeSlider.oninput = function() {
     generateGrid(gridWidth);
     listen();
 }
+
+function rgbToHex(r, g, b) {
+    return "#" + (1 << 24 | r << 16 | g << 8 | b).toString(16).slice(1);
+}
+
+let colorGrabOn = false;
+colorGrabBtn.addEventListener('click', () => {
+    if (!colorGrabOn) {
+        buttonsReset();
+        colorGrabOn = true;
+        colorGrabBtn.style.filter = "brightness(80%)";
+    } else buttonsReset();
+});
 
 
 //generate a 16x16 grid and wait for actions
